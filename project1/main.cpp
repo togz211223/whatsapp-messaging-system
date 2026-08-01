@@ -164,6 +164,9 @@ public:
 
     virtual void displayChat() const {
         // TODO: Implement chat display
+          for (int i = 0; i < messages.size(); i++) {
+        messages[i].display();
+    }
     }
 
     vector<Message> searchMessages(string keyword) const {
