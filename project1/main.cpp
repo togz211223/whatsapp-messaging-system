@@ -148,6 +148,8 @@ public:
 
     Chat(vector<string> users, string name) {
         // TODO: Implement parameterized constructor
+        participants = users;
+        chatName = name;
     }
 
     void addMessage(const Message& msg) {
