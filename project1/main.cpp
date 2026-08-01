@@ -159,6 +159,15 @@ public:
 
     bool deleteMessage(int index, const string& username) {
         // TODO: Implement message deletion
+        bool deleteMessage(int index, const string& username) {
+    if (index >= 0 && index < messages.size()) {
+        if (messages[index].getSender() == username) {
+            messages.erase(messages.begin() + index);
+            return true;
+        }
+    }
+    return false;
+}
         return false;
     }
 
