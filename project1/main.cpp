@@ -154,6 +154,7 @@ public:
 
     void addMessage(const Message& msg) {
         // TODO: Implement message addition
+        messages.push_back(msg);
     }
 
     bool deleteMessage(int index, const string& username) {
