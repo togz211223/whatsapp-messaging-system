@@ -299,30 +299,95 @@ private:
     vector<Chat*> chats;
     int currentUserIndex;
 
-    int findUserIndex(string username) const {
-        // TODO: Implement user search
+  int findUserIndex(string username) const {
+        for(int i=0;i<users.size();i++)
+        {
+            if (users[i].getUsername() == username)
+
+            {
+                return i;
+            }
+        }
         return -1;
     }
-
-    bool isLoggedIn() const {
-        // TODO: Implement login check
+    
+    bool isLoggedIn() const {          // ana
+        if (currentUserIndex >= 0 && currentUserIndex < users.size()) {
+            return true;
+        }
         return false;
     }
-
-    string getCurrentUsername() const {
-        // TODO: Implement get current user
+    
+    string getCurrentUsername() const {     // ana
+        if (isLoggedIn()) {
+            return users[currentUserIndex].getUsername();
+        }
         return "";
     }
 
 public:
     WhatsApp() : currentUserIndex(-1) {}
 
-    void signUp() {
-        // TODO: Implement user registration
+    ~WhatsApp()
+    {
+        for ( Chat*chat: chats)
+        {
+            delete chat;
+        }
     }
-
-    void login() {
-        // TODO: Implement user login
+    void signUp() {
+        string username,password,phoneNumber;
+        while (true) {
+            cout << "Enter username: ";
+            cin >> username;
+            if (findUserIndex(username) != -1) {
+                cout << "Username already exists. Please choose another.\n";
+            } else {
+                break;
+            }
+        }
+        while (true) {
+            cout << "Enter password: ";
+            cin >> password;
+            if (password.length() < 6) {
+                cout << "Password must be at least 6 characters.\n";
+            } else {
+                break;
+            }
+        }
+        while (true) {
+            cout << "Enter phone number: ";
+            cin >> phoneNumber;
+            if (phoneNumber.length() != 11) {
+                cout << "Phone number must be 11 digits.\n";
+            } else {
+                break;
+            }
+        }
+       users.push_back(User(username, password, phoneNumber));
+       cout << "Sign up successful!.\n";  
+       cout << "Now you may login...\n";
+    }
+   
+    
+    void login() {             
+       string username;
+       string password;
+       cout << "Enter username: ";
+       cin >> username;
+       int index = findUserIndex(username);
+       if(index == -1) {
+           cout << "User not found.\n";
+           return;
+       }
+       cout << "Enter password: ";
+       cin >> password;
+       if (!users[index].checkPassword(password)) {
+           cout << "Incorrect password.\n";
+           return;
+       }
+       currentUserIndex = index;
+       cout << "login succesfully...\n";
     }
 
     void startPrivateChat() {
@@ -336,9 +401,9 @@ public:
     void viewChats() const {
         // TODO: Implement chat viewing
     }
-
-    void logout() {
-        // TODO: Implement logout
+ void logout() {    
+        currentUserIndex = -1;
+        cout << "Logged out successfully.\n";
     }
 
     void run() {
