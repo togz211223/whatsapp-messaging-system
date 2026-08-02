@@ -154,25 +154,51 @@ public:
     }
 
     Chat(vector<string> users, string name) {
-        // TODO: Implement parameterized constructor
+        participants = users;
+        chatName = name;
     }
 
     void addMessage(const Message& msg) {
-        // TODO: Implement message addition
+        messages.push_back(msg);
     }
 
-    bool deleteMessage(int index, const string& username) {
-        // TODO: Implement message deletion
+    // QA FIX: Changed 'int index' to 'size_t index' to prevent compiler warnings
+    bool deleteMessage(size_t index, const string& username) {
+        if (index >= 0 && index < messages.size()) {
+            if (messages[index].getSender() == username) {
+                
+                // --- QA TICKET 12: DANGLING POINTER FIX START ---
+                Message* msgToDelete = &messages[index];
+                for (size_t i = 0; i < messages.size(); i++) {
+                    if (messages[i].getReplyTo() == msgToDelete) {
+                        messages[i].setReplyTo(nullptr);
+                    }
+                }
+                // --- QA TICKET 12: DANGLING POINTER FIX END ---
+
+                messages.erase(messages.begin() + index);
+                return true;
+            }
+        }
         return false;
     }
 
     virtual void displayChat() const {
-        // TODO: Implement chat display
+        // QA FIX: Changed 'int i' to 'size_t i' to prevent compiler warnings
+        for (size_t i = 0; i < messages.size(); i++) {
+            messages[i].display();
+        }
     }
 
     vector<Message> searchMessages(string keyword) const {
-        // TODO: Implement message search
-        return {};
+        vector<Message> matches;
+        // QA FIX: Changed 'int i' to 'size_t i' to prevent compiler warnings
+        for (size_t i = 0; i < messages.size(); i++) {
+            if (messages[i].getContent().find(keyword) != string::npos) {
+                matches.push_back(messages[i]);
+            }
+        }
+        return matches;
     }
 
     void exportToFile(const string& filename) const {
@@ -189,16 +215,33 @@ private:
     string user2;
 
 public:
-    PrivateChat(string u1, string u2) {
-        // TODO: Implement constructor
+    PrivateChat(string u1, string u2) : Chat(vector<string>{u1, u2}, "Chat between " + u1 + " and " + u2) {
+        user1 = u1;
+        user2 = u2;
     }
 
     void displayChat() const override {
-        // TODO: Implement private chat display
+        cout << "\n=== Private Chat ===\n";
+        cout << user1 << " and " << user2 << endl;
+
+        if (messages.empty()) {
+            cout << "No messages yet.\n";
+            return;
+        }
+
+        // QA FIX: Changed 'int i' to 'size_t i' to prevent compiler warnings
+        for (size_t i = 0; i < messages.size(); i++) {
+            messages[i].display();
+        }
     }
 
     void showTypingIndicator(const string& username) const {
-        // TODO: Implement typing indicator
+        if (username == user1 || username == user2) {
+            cout << username << " is typing...\n";
+        }
+        else {
+            cout << "User is not part of this private chat.\n";
+        }
     }
 };
 
