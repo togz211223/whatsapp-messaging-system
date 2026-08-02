@@ -159,15 +159,12 @@ public:
 
     bool deleteMessage(int index, const string& username) {
         // TODO: Implement message deletion
-        bool deleteMessage(int index, const string& username) {
     if (index >= 0 && index < messages.size()) {
         if (messages[index].getSender() == username) {
             messages.erase(messages.begin() + index);
             return true;
         }
     }
-    return false;
-}
         return false;
     }
 
@@ -203,16 +200,33 @@ private:
     string user2;
 
 public:
-    PrivateChat(string u1, string u2) {
-        // TODO: Implement constructor
+    PrivateChat(string u1, string u2) : Chat(vector<string>{u1, u2}, "Chat between " + u1 + " and " + u2) {
+        user1 = u1;
+        user2 = u2;
     }
 
     void displayChat() const override {
-        // TODO: Implement private chat display
+            cout << "\n=== Private Chat ===\n";
+            cout << user1 << " and " << user2 << endl;
+
+            if (messages.empty()) {
+                cout << "No messages yet.\n";
+                return;
+            }
+
+            for (int i = 0; i < messages.size(); i++) {
+                messages[i].display();
+            }
+        
     }
 
     void showTypingIndicator(const string& username) const {
-        // TODO: Implement typing indicator
+        if (username == user1 || username == user2) {
+            cout << username << " is typing...\n";
+        }
+        else {
+            cout << "User is not part of this private chat.\n";
+        }
     }
 };
 
