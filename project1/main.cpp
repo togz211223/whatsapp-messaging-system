@@ -282,39 +282,115 @@ private:
     string description;
 
 public:
-    GroupChat(vector<string> users, string name, string creator) {
-        // TODO: Implement constructor
+    GroupChat(vector<string> users, string name, string creator) : Chat(users, name) {
+        description = "";
+
+        if (!isParticipant(creator)) {
+            participants.push_back(creator);
+        }
+
+        admins.push_back(creator);
     }
 
     void addAdmin(string newAdmin) {
-        // TODO: Implement add admin
+        if (!isParticipant(newAdmin)) {
+            cout << "Cannot add admin. User is not a participant.\n";
+            return;
+        }
+
+        if (isAdmin(newAdmin)) {
+            cout << newAdmin << " is already an admin.\n";
+            return;
+        }
+
+        admins.push_back(newAdmin);
+        cout << newAdmin << " is now an admin.\n";
     }
 
     bool removeParticipant(const string& admin, const string& userToRemove) {
-        // TODO: Implement remove participant
-        return false;
+        if (!isAdmin(admin)) {
+            cout << "Only admins can remove participants.\n";
+            return false;
+        }
+
+        if (!isParticipant(userToRemove)) {
+            cout << "User is not in this group.\n";
+            return false;
+        }
+
+        for (size_t i = 0; i < participants.size(); i++) {
+            if (participants[i] == userToRemove) {
+                participants.erase(participants.begin() + i);
+                break;
+            }
+        }
+
+        for (size_t i = 0; i < admins.size(); i++) {
+            if (admins[i] == userToRemove) {
+                admins.erase(admins.begin() + i);
+                break;
+            }
+        }
+
+        cout << userToRemove << " was removed from the group.\n";
+        return true;
     }
 
     bool isAdmin(string username) const {
-        // TODO: Implement admin check
+        for (size_t i = 0; i < admins.size(); i++) {
+            if (admins[i] == username) {
+                return true;
+            }
+        }
+
         return false;
     }
 
     bool isParticipant(string username) const {
-        // TODO: Implement participant check
+        for (size_t i = 0; i < participants.size(); i++) {
+            if (participants[i] == username) {
+                return true;
+            }
+        }
+
         return false;
     }
 
     void setDescription(string desc) {
-        // TODO: Implement set description
+        description = desc;
     }
 
     void displayChat() const override {
-        // TODO: Implement group chat display
+        cout << "\n=== Group Chat: " << chatName << " ===\n";
+
+        if (!description.empty()) {
+            cout << "Description: " << description << endl;
+        }
+
+        cout << "Participants: ";
+        for (size_t i = 0; i < participants.size(); i++) {
+            cout << participants[i] << " ";
+        }
+
+        cout << "\nAdmins: ";
+        for (size_t i = 0; i < admins.size(); i++) {
+            cout << admins[i] << " ";
+        }
+
+        cout << "\nMessages:\n";
+
+        if (messages.empty()) {
+            cout << "No messages yet.\n";
+        }
+        else {
+            for (size_t i = 0; i < messages.size(); i++) {
+                messages[i].display();
+            }
+        }
     }
 
     void sendJoinRequest(const string& username) {
-        // TODO: Implement join request
+        cout << username << " requested to join group: " << chatName << endl;
     }
 };
 
