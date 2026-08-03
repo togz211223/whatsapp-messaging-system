@@ -60,12 +60,13 @@ public:
     }
 
     void updateLastSeen() {
-        // TODO: Implement last seen update
+        time_t now = time(0);           
+        lastSeen = ctime(&now);         
+        lastSeen.pop_back();
     }
 
     bool checkPassword(string pwd) const {
-        // TODO: Implement password check
-        return false;
+        return pwd == password;
     }
 
     void changePassword(string newPwd) {
