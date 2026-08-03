@@ -390,18 +390,126 @@ public:
        currentUserIndex = index;
        cout << "login succesfully...\n";
     }
-
     void startPrivateChat() {
-        // TODO: Implement private chat creation
+        if (!isLoggedIn()) {
+            cout << "Please log in first!\n";
+            return;
+        }
+        
+        users[currentUserIndex].updateLastSeen();
+        
+        string targetUser;
+        cout << "\n--- Start Private Chat ---\n";
+        cout << "Enter target username: ";
+        cin >> targetUser;
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        
+        if (targetUser == getCurrentUsername()) {
+            cout << "Operation rejected.\n";
+            return;
+        }
+        
+        if (findUserIndex(targetUser) == -1) {
+            cout << "Error: User does not exist!\n";
+            return;
+        }
+        
+        Chat* newChat = new PrivateChat(getCurrentUsername(), targetUser);
+        chats.push_back(newChat);
+        
+        cout << "Private chat created successfully!\n";
     }
 
     void createGroup() {
-        // TODO: Implement group creation
+        if (!isLoggedIn()) {
+            cout << "Please log in first!\n";
+            return;
+        }
+        
+        users[currentUserIndex].updateLastSeen();
+        
+        string groupName, description, secondUser;
+        cout << "\n--- Create Group Chat ---\n";
+        cout << "Enter Group Name: ";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        getline(cin, groupName);
+        
+        cout << "Enter Group Description: ";
+        getline(cin, description);
+        
+        cout << "Enter a second valid username to add (minimum 2 participants required): ";
+        getline(cin, secondUser);
+        
+        if (groupName.empty() || secondUser == getCurrentUsername() || findUserIndex(secondUser) == -1) {
+            cout << "Operation rejected / returns false\n";
+            return;
+        }
+        
+        vector<string> initialParticipants;
+        initialParticipants.push_back(getCurrentUsername());
+        initialParticipants.push_back(secondUser);
+        
+        Chat* newGroup = new GroupChat(groupName, description, initialParticipants);
+        chats.push_back(newGroup);
+        
+        cout << "Group created successfully!\n";
     }
 
     void viewChats() const {
-        // TODO: Implement chat viewing
+        if (!isLoggedIn()) {
+            cout << "Please log in first!\n";
+            return;
+        }
+        
+        string current = getCurrentUsername();
+        vector<Chat*> myChats;
+        cout << "\n========================================\n";
+        cout << "           Your Active Chats            \n";
+        cout << "========================================\n";
+        
+        int count = 1;
+        for (size_t i = 0; i < chats.size(); i++) {
+            vector<string> participants = chats[i]->getParticipants();
+            bool hasAccess = false;
+            
+            for (size_t j = 0; j < participants.size(); j++) {
+                if (participants[j] == current) {
+                    hasAccess = true;
+                    break;
+                }
+            }
+            
+            if (hasAccess) {
+                cout << count << ". " << chats[i]->getChatName() << "\n";
+                myChats.push_back(chats[i]);
+                count++;
+            }
+        }
+        
+        if (myChats.empty()) {
+            cout << "No active chats found.\n========================================\n";
+            return;
+        }
+        
+        cout << "========================================\n";
+        
+        int choice;
+        cout << "Enter chat number to open (or 0 to go back): ";
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            return;
+        }
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        
+        if (choice > 0 && choice <= static_cast<int>(myChats.size())) {
+            myChats[choice - 1]->displayChat();
+        } else if (choice != 0) {
+            cout << "Access denied.\n";
+        }
     }
+
+    
  void logout() { 
       if (isLoggedIn()) {
             users[currentUserIndex].updateLastSeen();   
