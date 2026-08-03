@@ -301,7 +301,7 @@ private:
     int currentUserIndex;
 
   int findUserIndex(string username) const {
-        for(int i=0;i<users.size();i++)
+        for(size_t i=0;i<users.size();i++)
         {
             if (users[i].getUsername() == username)
 
@@ -313,7 +313,7 @@ private:
     }
     
     bool isLoggedIn() const {          // ana
-        if (currentUserIndex >= 0 && currentUserIndex < users.size()) {
+        if (currentUserIndex >= 0 && (size_t)currentUserIndex < users.size()) {
             return true;
         }
         return false;
@@ -403,7 +403,9 @@ public:
         // TODO: Implement chat viewing
     }
  void logout() { 
-     users[currentUserIndex].updateLastSeen();   
+      if (isLoggedIn()) {
+            users[currentUserIndex].updateLastSeen();   
+        }
         currentUserIndex = -1;
         cout << "Logged out successfully.\n";
     }
