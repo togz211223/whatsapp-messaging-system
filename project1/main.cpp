@@ -87,56 +87,82 @@ private:
 
 public:
     Message() {
-        // TODO: Implement default constructor
+        sender = "";
+        content = "";
+        timestamp = "";
+        status = "";
+        replyTo = nullptr;
     }
 
     Message(string sndr, string cntnt) {
-        // TODO: Implement parameterized constructor
+        sender = sndr;
+        content = cntnt;
+        status = "sent";
+        updateTimestamp() ;
+        replyTo = nullptr;
     }
 
     string getContent() const {
-        // TODO: Implement getter
-        return "";
+        return content;
     }
 
     string getSender() const {
-        // TODO: Implement getter
-        return "";
+        return sender;
     }
 
     string getTimestamp() const {
-        // TODO: Implement getter
-        return "";
+        return timestamp;
     }
 
     string getStatus() const {
-        // TODO: Implement getter
-        return "";
+        return status;
     }
 
     Message* getReplyTo() const {
-        // TODO: Implement getter
-        return nullptr;
+        return replyTo;
     }
 
     void setStatus(string newStatus) {
-        // TODO: Implement setter
+        status = newStatus ;
     }
 
     void setReplyTo(Message* msg) {
-        // TODO: Implement setter
+        replyTo = msg ;
     }
 
     void updateTimestamp() {
-        // TODO: Implement timestamp update
+        time_t now = time(0);
+        timestamp = ctime(&now);
     }
 
     void display() const {
-        // TODO: Implement message display
+        if (replyTo !=nullptr){
+            cout << "Replying to " << replyTo->getSender() << endl;
+            string longMess = replyTo->getContent();
+            if (longMess.length() > 50 ){
+                cout << longMess.substr(0, 50) << "..." << endl;}
+            else {
+            cout << replyTo->getContent() << endl;}
+        }
+        cout << "from:" << sender << endl;
+        cout << content << endl;
+        cout << status << endl;
+        cout << timestamp << endl;
     }
 
     void addEmoji(string emojiCode) {
-        // TODO: Implement emoji support
+        string emoji ;
+        size_t explore = 0;
+        if (emojiCode == ":)" ) {emoji = "\U0001F60A";}
+        else if (emojiCode == ":(" ) {emoji = "\U0001F61F";} 
+        else if (emojiCode == ":D" ) {emoji = "\U0001F603";}
+        else if (emojiCode == "<3" ) {emoji = "\u2764";}
+        else if (emojiCode == ":thumbsup:" ) {emoji = "\U0001F44D";}
+        else {return;}
+        while ((explore = content.find(emojiCode, explore)) != string::npos) {
+            content.replace(explore, emojiCode.length(), emoji);
+            explore += emoji.length() ; 
+        }
     }
 };
 
