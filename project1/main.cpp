@@ -402,7 +402,8 @@ public:
     void viewChats() const {
         // TODO: Implement chat viewing
     }
- void logout() {    
+ void logout() { 
+     users[currentUserIndex].updateLastSeen();   
         currentUserIndex = -1;
         cout << "Logged out successfully.\n";
     }
