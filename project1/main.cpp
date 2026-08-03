@@ -133,6 +133,7 @@ public:
     void updateTimestamp() {
         time_t now = time(0);
         timestamp = ctime(&now);
+        timestamp.pop_back(); // to fix weird extra space
     }
 
     void display() const {
