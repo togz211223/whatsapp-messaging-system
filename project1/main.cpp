@@ -290,19 +290,42 @@ public:
             return false;
         }
 
-        participants.erase(remove(participants.begin(), participants.end(), userToRemove), participants.end());
-        admins.erase(remove(admins.begin(), admins.end(), userToRemove), admins.end());
+        for (size_t i = 0; i < participants.size(); i++) {
+            if (participants[i] == userToRemove) {
+                participants.erase(participants.begin() + i);
+                break;
+            }
+        }
+
+        for (size_t i = 0; i < admins.size(); i++) {
+            if (admins[i] == userToRemove) {
+                admins.erase(admins.begin() + i);
+                break;
+            }
+        }
 
         cout << userToRemove << " was removed from the group.\n";
         return true;
     }
 
     bool isAdmin(string username) const {
-        return find(admins.begin(), admins.end(), username) != admins.end();
+        for (size_t i = 0; i < admins.size(); i++) {
+            if (admins[i] == username) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     bool isParticipant(string username) const {
-        return find(participants.begin(), participants.end(), username) != participants.end();
+        for (size_t i = 0; i < participants.size(); i++) {
+            if (participants[i] == username) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     void setDescription(string desc) {
