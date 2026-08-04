@@ -34,33 +34,17 @@ public:
         updateLastSeen();
     }
 
-    string getUsername() const {
-       return username;
-    }
+    string getUsername() const { return username; }
+    string getPhoneNumber() const { return phoneNumber; }
+    string getStatus() const { return status; }
+    string getLastSeen() const { return lastSeen; }
 
-    string getPhoneNumber() const {
-        return phoneNumber;
-    }
-
-    string getStatus() const {
-        return status;
-    }
-
-    string getLastSeen() const {
-        return lastSeen;
-    }
-
-    void setStatus(string newStatus) {
-        status = newStatus;
-    }
-
-    void setPhoneNumber(string phone) {
-        phoneNumber = phone;
-    }
+    void setStatus(string newStatus) { status = newStatus; }
+    void setPhoneNumber(string phone) { phoneNumber = phone; }
 
     void updateLastSeen() {
-        time_t now = time(0);           
-        lastSeen = ctime(&now);         
+        time_t now = time(0);
+        lastSeen = ctime(&now);
         lastSeen.pop_back();
     }
 
@@ -102,33 +86,14 @@ public:
         replyTo = nullptr;
     }
 
-    string getContent() const {
-        return content;
-    }
+    string getContent() const { return content; }
+    string getSender() const { return sender; }
+    string getTimestamp() const { return timestamp; }
+    string getStatus() const { return status; }
+    Message* getReplyTo() const { return replyTo; }
 
-    string getSender() const {
-        return sender;
-    }
-
-    string getTimestamp() const {
-        return timestamp;
-    }
-
-    string getStatus() const {
-        return status;
-    }
-
-    Message* getReplyTo() const {
-        return replyTo;
-    }
-
-    void setStatus(string newStatus) {
-        status = newStatus;
-    }
-
-    void setReplyTo(Message* msg) {
-        replyTo = msg;
-    }
+    void setStatus(string newStatus) { status = newStatus; }
+    void setReplyTo(Message* msg) { replyTo = msg; }
 
     void updateTimestamp() {
         time_t now = time(0);
@@ -142,7 +107,8 @@ public:
             string longMess = replyTo->getContent();
             if (longMess.length() > 50) {
                 cout << longMess.substr(0, 50) << "..." << endl;
-            } else {
+            }
+            else {
                 cout << replyTo->getContent() << endl;
             }
         }
@@ -156,14 +122,15 @@ public:
         string emoji;
         size_t explore = 0;
         if (emojiCode == ":)") { emoji = "\U0001F60A"; }
-        else if (emojiCode == ":(") { emoji = "\U0001F61F"; } 
+        else if (emojiCode == ":(") { emoji = "\U0001F61F"; }
         else if (emojiCode == ":D") { emoji = "\U0001F603"; }
         else if (emojiCode == "<3") { emoji = "\u2764"; }
         else if (emojiCode == ":thumbsup:") { emoji = "\U0001F44D"; }
         else { return; }
+
         while ((explore = content.find(emojiCode, explore)) != string::npos) {
             content.replace(explore, emojiCode.length(), emoji);
-            explore += emoji.length(); 
+            explore += emoji.length();
         }
     }
 };
@@ -192,14 +159,12 @@ public:
     bool deleteMessage(size_t index, const string& username) {
         if (index >= 0 && index < messages.size()) {
             if (messages[index].getSender() == username) {
-                
                 Message* msgToDelete = &messages[index];
                 for (size_t i = 0; i < messages.size(); i++) {
                     if (messages[i].getReplyTo() == msgToDelete) {
                         messages[i].setReplyTo(nullptr);
                     }
                 }
-
                 messages.erase(messages.begin() + index);
                 return true;
             }
@@ -225,13 +190,8 @@ public:
 
     void exportToFile(const string& filename) const {}
 
-    vector<string> getParticipants() const {
-        return participants;
-    }
-
-    string getChatName() const {
-        return chatName;
-    }
+    vector<string> getParticipants() const { return participants; }
+    string getChatName() const { return chatName; }
 };
 
 // ========================
@@ -283,11 +243,9 @@ private:
 public:
     GroupChat(vector<string> users, string name, string creator) : Chat(users, name) {
         description = "";
-
         if (!isParticipant(creator)) {
             participants.push_back(creator);
         }
-
         admins.push_back(creator);
     }
 
@@ -296,12 +254,10 @@ public:
             cout << "Cannot add admin. User is not a participant.\n";
             return;
         }
-
         if (isAdmin(newAdmin)) {
             cout << newAdmin << " is already an admin.\n";
             return;
         }
-
         admins.push_back(newAdmin);
         cout << newAdmin << " is now an admin.\n";
     }
@@ -311,47 +267,37 @@ public:
             cout << "Only admins can remove participants.\n";
             return false;
         }
-
         if (!isParticipant(userToRemove)) {
             cout << "User is not in this group.\n";
             return false;
         }
-
         for (size_t i = 0; i < participants.size(); i++) {
             if (participants[i] == userToRemove) {
                 participants.erase(participants.begin() + i);
                 break;
             }
         }
-
         for (size_t i = 0; i < admins.size(); i++) {
             if (admins[i] == userToRemove) {
                 admins.erase(admins.begin() + i);
                 break;
             }
         }
-
         cout << userToRemove << " was removed from the group.\n";
         return true;
     }
 
     bool isAdmin(string username) const {
         for (size_t i = 0; i < admins.size(); i++) {
-            if (admins[i] == username) {
-                return true;
-            }
+            if (admins[i] == username) { return true; }
         }
-
         return false;
     }
 
     bool isParticipant(string username) const {
         for (size_t i = 0; i < participants.size(); i++) {
-            if (participants[i] == username) {
-                return true;
-            }
+            if (participants[i] == username) { return true; }
         }
-
         return false;
     }
 
@@ -361,23 +307,18 @@ public:
 
     void displayChat() const override {
         cout << "\n=== Group Chat: " << chatName << " ===\n";
-
         if (!description.empty()) {
             cout << "Description: " << description << endl;
         }
-
         cout << "Participants: ";
         for (size_t i = 0; i < participants.size(); i++) {
             cout << participants[i] << " ";
         }
-
         cout << "\nAdmins: ";
         for (size_t i = 0; i < admins.size(); i++) {
             cout << admins[i] << " ";
         }
-
         cout << "\nMessages:\n";
-
         if (messages.empty()) {
             cout << "No messages yet.\n";
         }
@@ -402,22 +343,22 @@ private:
     vector<Chat*> chats;
     int currentUserIndex;
 
-  int findUserIndex(string username) const {
-        for(size_t i=0; i<users.size(); i++) {
+    int findUserIndex(string username) const {
+        for (size_t i = 0; i < users.size(); i++) {
             if (users[i].getUsername() == username) {
                 return i;
             }
         }
         return -1;
     }
-    
+
     bool isLoggedIn() const {
         if (currentUserIndex >= 0 && (size_t)currentUserIndex < users.size()) {
             return true;
         }
         return false;
     }
-    
+
     string getCurrentUsername() const {
         if (isLoggedIn()) {
             return users[currentUserIndex].getUsername();
@@ -441,7 +382,8 @@ public:
             cin >> username;
             if (findUserIndex(username) != -1) {
                 cout << "Username already exists. Please choose another.\n";
-            } else {
+            }
+            else {
                 break;
             }
         }
@@ -450,7 +392,8 @@ public:
             cin >> password;
             if (password.length() < 6) {
                 cout << "Password must be at least 6 characters.\n";
-            } else {
+            }
+            else {
                 break;
             }
         }
@@ -459,33 +402,34 @@ public:
             cin >> phoneNumber;
             if (phoneNumber.length() != 11) {
                 cout << "Phone number must be 11 digits.\n";
-            } else {
+            }
+            else {
                 break;
             }
         }
-       users.push_back(User(username, password, phoneNumber));
-       cout << "Sign up successful!.\n";  
-       cout << "Now you may login...\n";
+        users.push_back(User(username, password, phoneNumber));
+        cout << "Sign up successful!.\n";
+        cout << "Now you may login...\n";
     }
-   
-    void login() {             
-       string username;
-       string password;
-       cout << "Enter username: ";
-       cin >> username;
-       int index = findUserIndex(username);
-       if(index == -1) {
-           cout << "User not found.\n";
-           return;
-       }
-       cout << "Enter password: ";
-       cin >> password;
-       if (!users[index].checkPassword(password)) {
-           cout << "Incorrect password.\n";
-           return;
-       }
-       currentUserIndex = index;
-       cout << "login succesfully...\n";
+
+    void login() {
+        string username;
+        string password;
+        cout << "Enter username: ";
+        cin >> username;
+        int index = findUserIndex(username);
+        if (index == -1) {
+            cout << "User not found.\n";
+            return;
+        }
+        cout << "Enter password: ";
+        cin >> password;
+        if (!users[index].checkPassword(password)) {
+            cout << "Incorrect password.\n";
+            return;
+        }
+        currentUserIndex = index;
+        cout << "Login successfully...\n";
     }
 
     void startPrivateChat() {
@@ -493,28 +437,28 @@ public:
             cout << "Please log in first!\n";
             return;
         }
-        
+
         users[currentUserIndex].updateLastSeen();
-        
+
         string targetUser;
         cout << "\n--- Start Private Chat ---\n";
         cout << "Enter target username: ";
         cin >> targetUser;
-        cin.ignore(10000, '\n');
-        
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
         if (targetUser == getCurrentUsername()) {
             cout << "Operation rejected.\n";
             return;
         }
-        
+
         if (findUserIndex(targetUser) == -1) {
             cout << "Error: User does not exist!\n";
             return;
         }
-        
+
         Chat* newChat = new PrivateChat(getCurrentUsername(), targetUser);
         chats.push_back(newChat);
-        
+
         cout << "Private chat created successfully!\n";
     }
 
@@ -523,38 +467,38 @@ public:
             cout << "Please log in first!\n";
             return;
         }
-        
+
         users[currentUserIndex].updateLastSeen();
-        
+
         string groupName, description, secondUser;
         cout << "\n--- Create Group Chat ---\n";
         cout << "Enter Group Name: ";
-        cin.ignore(10000, '\n');
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         getline(cin, groupName);
-        
+
         cout << "Enter Group Description: ";
         getline(cin, description);
-        
+
         cout << "Enter a second valid username to add (minimum 2 participants required): ";
         getline(cin, secondUser);
-        
+
         if (groupName.empty() || secondUser == getCurrentUsername() || findUserIndex(secondUser) == -1) {
             cout << "Operation rejected / returns false\n";
             return;
         }
-        
+
         vector<string> initialParticipants;
         initialParticipants.push_back(getCurrentUsername());
         initialParticipants.push_back(secondUser);
-        
+
         GroupChat* newGroup = new GroupChat(initialParticipants, groupName, getCurrentUsername());
         newGroup->setDescription(description);
         chats.push_back(newGroup);
-        
+
         cout << "Group created successfully!\n";
     }
 
-    void viewChats() { // QA FIX: Removed 'const' so we can add messages
+    void viewChats() const {
         if (!isLoggedIn()) {
             cout << "Please log in first!\n";
             return;
@@ -596,77 +540,22 @@ public:
         cout << "Enter chat number to open (or 0 to go back): ";
         if (!(cin >> choice)) {
             cin.clear();
-            cin.ignore(10000, '\n');
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             return;
         }
-        cin.ignore(10000, '\n');
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-        // --- THE UI FIX: Inner Chat Menu Loop ---
         if (choice > 0 && choice <= static_cast<int>(myChats.size())) {
-            Chat* selectedChat = myChats[choice - 1];
-
-            while (true) {
-                selectedChat->displayChat();
-                cout << "\n[1] Send Message  [2] Reply to Message  [3] Delete Message  [4] Search  [0] Back\nChoice: ";
-                int chatAction;
-                cin >> chatAction;
-                cin.ignore(10000, '\n');
-
-                if (chatAction == 1) {
-                    string text;
-                    cout << "Enter message: ";
-                    getline(cin, text);
-                    Message newMsg(current, text);
-                    selectedChat->addMessage(newMsg);
-                }
-                else if (chatAction == 2) {
-                    cout << "Enter message index to reply to (starts at 0): ";
-                    size_t idx;
-                    cin >> idx;
-                    cin.ignore(10000, '\n');
-                    string text;
-                    cout << "Enter reply message: ";
-                    getline(cin, text);
-
-                    Message newMsg(current, text);
-                    // Create a dummy message just to hold the pointer (to simulate reply)
-                    // Fuzetek test cases check if pointer logic works
-                    cout << "Message sent as reply!\n";
-                }
-                else if (chatAction == 3) {
-                    size_t idx;
-                    cout << "Enter message index to delete (starts at 0): ";
-                    cin >> idx;
-                    if (selectedChat->deleteMessage(idx, current)) {
-                        cout << "Message deleted successfully.\n";
-                    }
-                    else {
-                        cout << "Failed: Invalid index or you are not the sender.\n";
-                    }
-                }
-                else if (chatAction == 4) {
-                    string keyword;
-                    cout << "Enter keyword to search: ";
-                    cin >> keyword;
-                    vector<Message> results = selectedChat->searchMessages(keyword);
-                    cout << "\n--- Search Results ---\n";
-                    for (size_t i = 0; i < results.size(); i++) {
-                        cout << "- " << results[i].getSender() << ": " << results[i].getContent() << "\n";
-                    }
-                }
-                else if (chatAction == 0) {
-                    break; // Go back to main menu
-                }
-            }
+            myChats[choice - 1]->displayChat();
         }
         else if (choice != 0) {
             cout << "Access denied.\n";
         }
     }
 
-    void logout() { 
+    void logout() {
         if (isLoggedIn()) {
-            users[currentUserIndex].updateLastSeen();   
+            users[currentUserIndex].updateLastSeen();
         }
         currentUserIndex = -1;
         cout << "Logged out successfully.\n";
