@@ -558,39 +558,39 @@ public:
             cout << "Please log in first!\n";
             return;
         }
-        
+
         string current = getCurrentUsername();
         vector<Chat*> myChats;
         cout << "\n========================================\n";
         cout << "           Your Active Chats            \n";
         cout << "========================================\n";
-        
+
         int count = 1;
         for (size_t i = 0; i < chats.size(); i++) {
             vector<string> participants = chats[i]->getParticipants();
             bool hasAccess = false;
-            
+
             for (size_t j = 0; j < participants.size(); j++) {
                 if (participants[j] == current) {
                     hasAccess = true;
                     break;
                 }
             }
-            
+
             if (hasAccess) {
                 cout << count << ". " << chats[i]->getChatName() << "\n";
                 myChats.push_back(chats[i]);
                 count++;
             }
         }
-        
+
         if (myChats.empty()) {
             cout << "No active chats found.\n========================================\n";
             return;
         }
-        
+
         cout << "========================================\n";
-        
+
         int choice;
         cout << "Enter chat number to open (or 0 to go back): ";
         if (!(cin >> choice)) {
@@ -599,25 +599,25 @@ public:
             return;
         }
         cin.ignore(10000, '\n');
-        
+
         // --- THE UI FIX: Inner Chat Menu Loop ---
         if (choice > 0 && choice <= static_cast<int>(myChats.size())) {
             Chat* selectedChat = myChats[choice - 1];
-            
+
             while (true) {
                 selectedChat->displayChat();
                 cout << "\n[1] Send Message  [2] Reply to Message  [3] Delete Message  [4] Search  [0] Back\nChoice: ";
                 int chatAction;
                 cin >> chatAction;
                 cin.ignore(10000, '\n');
-                
+
                 if (chatAction == 1) {
                     string text;
                     cout << "Enter message: ";
                     getline(cin, text);
                     Message newMsg(current, text);
                     selectedChat->addMessage(newMsg);
-                } 
+                }
                 else if (chatAction == 2) {
                     cout << "Enter message index to reply to (starts at 0): ";
                     size_t idx;
@@ -626,7 +626,7 @@ public:
                     string text;
                     cout << "Enter reply message: ";
                     getline(cin, text);
-                    
+
                     Message newMsg(current, text);
                     // Create a dummy message just to hold the pointer (to simulate reply)
                     // Fuzetek test cases check if pointer logic works
@@ -638,7 +638,8 @@ public:
                     cin >> idx;
                     if (selectedChat->deleteMessage(idx, current)) {
                         cout << "Message deleted successfully.\n";
-                    } else {
+                    }
+                    else {
                         cout << "Failed: Invalid index or you are not the sender.\n";
                     }
                 }
@@ -656,55 +657,8 @@ public:
                     break; // Go back to main menu
                 }
             }
-        } else if (choice != 0) {
-            cout << "Access denied.\n";
         }
-    }
-        
-        string current = getCurrentUsername();
-        vector<Chat*> myChats;
-        cout << "\n========================================\n";
-        cout << "           Your Active Chats            \n";
-        cout << "========================================\n";
-        
-        int count = 1;
-        for (size_t i = 0; i < chats.size(); i++) {
-            vector<string> participants = chats[i]->getParticipants();
-            bool hasAccess = false;
-            
-            for (size_t j = 0; j < participants.size(); j++) {
-                if (participants[j] == current) {
-                    hasAccess = true;
-                    break;
-                }
-            }
-            
-            if (hasAccess) {
-                cout << count << ". " << chats[i]->getChatName() << "\n";
-                myChats.push_back(chats[i]);
-                count++;
-            }
-        }
-        
-        if (myChats.empty()) {
-            cout << "No active chats found.\n========================================\n";
-            return;
-        }
-        
-        cout << "========================================\n";
-        
-        int choice;
-        cout << "Enter chat number to open (or 0 to go back): ";
-        if (!(cin >> choice)) {
-            cin.clear();
-            cin.ignore(10000, '\n');
-            return;
-        }
-        cin.ignore(10000, '\n');
-        
-        if (choice > 0 && choice <= static_cast<int>(myChats.size())) {
-            myChats[choice - 1]->displayChat();
-        } else if (choice != 0) {
+        else if (choice != 0) {
             cout << "Access denied.\n";
         }
     }
