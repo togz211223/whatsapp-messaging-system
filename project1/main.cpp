@@ -352,6 +352,7 @@ public:
         // TODO: Implement chat viewing
     }
  void logout() {    
+       users[currentUserIndex].updateLastSeen();
         currentUserIndex = -1;
         cout << "Logged out successfully.\n";
     }
