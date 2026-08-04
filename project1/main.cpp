@@ -16,38 +16,36 @@ private:
     string lastSeen;
 
 public:
-     User() {
+    User() {
         username = "";
         password = "";
         phoneNumber = "";
         status = "";
         lastSeen = "";
-
+        updateLastSeen();
     }
 
     User(string uname, string pwd, string phone) {
-      username = uname;
-      password = pwd;
-      phoneNumber = phone;
+        username = uname;
+        password = pwd;
+        phoneNumber = phone;
+        status = "Online";
+        updateLastSeen();
     }
 
     string getUsername() const {
-
        return username;
     }
 
     string getPhoneNumber() const {
-
         return phoneNumber;
     }
 
     string getStatus() const {
-
         return status;
     }
 
     string getLastSeen() const {
-
         return lastSeen;
     }
 
@@ -70,7 +68,8 @@ public:
     }
 
     void changePassword(string newPwd) {
-        // TODO: Implement password change
+        password = newPwd;
+        updateLastSeen();
     }
 };
 
@@ -98,7 +97,7 @@ public:
         sender = sndr;
         content = cntnt;
         status = "sent";
-        updateTimestamp() ;
+        updateTimestamp();
         replyTo = nullptr;
     }
 
@@ -123,27 +122,28 @@ public:
     }
 
     void setStatus(string newStatus) {
-        status = newStatus ;
+        status = newStatus;
     }
 
     void setReplyTo(Message* msg) {
-        replyTo = msg ;
+        replyTo = msg;
     }
 
     void updateTimestamp() {
         time_t now = time(0);
         timestamp = ctime(&now);
-        timestamp.pop_back(); // to fix weird extra space
+        timestamp.pop_back();
     }
 
     void display() const {
-        if (replyTo !=nullptr){
+        if (replyTo != nullptr) {
             cout << "Replying to " << replyTo->getSender() << endl;
             string longMess = replyTo->getContent();
-            if (longMess.length() > 50 ){
-                cout << longMess.substr(0, 50) << "..." << endl;}
-            else {
-            cout << replyTo->getContent() << endl;}
+            if (longMess.length() > 50) {
+                cout << longMess.substr(0, 50) << "..." << endl;
+            } else {
+                cout << replyTo->getContent() << endl;
+            }
         }
         cout << "from:" << sender << endl;
         cout << content << endl;
@@ -152,17 +152,17 @@ public:
     }
 
     void addEmoji(string emojiCode) {
-        string emoji ;
+        string emoji;
         size_t explore = 0;
-        if (emojiCode == ":)" ) {emoji = "\U0001F60A";}
-        else if (emojiCode == ":(" ) {emoji = "\U0001F61F";} 
-        else if (emojiCode == ":D" ) {emoji = "\U0001F603";}
-        else if (emojiCode == "<3" ) {emoji = "\u2764";}
-        else if (emojiCode == ":thumbsup:" ) {emoji = "\U0001F44D";}
-        else {return;}
+        if (emojiCode == ":)") { emoji = "\U0001F60A"; }
+        else if (emojiCode == ":(") { emoji = "\U0001F61F"; } 
+        else if (emojiCode == ":D") { emoji = "\U0001F603"; }
+        else if (emojiCode == "<3") { emoji = "\u2764"; }
+        else if (emojiCode == ":thumbsup:") { emoji = "\U0001F44D"; }
+        else { return; }
         while ((explore = content.find(emojiCode, explore)) != string::npos) {
             content.replace(explore, emojiCode.length(), emoji);
-            explore += emoji.length() ; 
+            explore += emoji.length(); 
         }
     }
 };
@@ -177,9 +177,7 @@ protected:
     string chatName;
 
 public:
-    Chat() {
-        // TODO: Implement default constructor
-    }
+    Chat() {}
 
     Chat(vector<string> users, string name) {
         participants = users;
@@ -190,19 +188,16 @@ public:
         messages.push_back(msg);
     }
 
-    // QA FIX: Changed 'int index' to 'size_t index' to prevent compiler warnings
     bool deleteMessage(size_t index, const string& username) {
         if (index >= 0 && index < messages.size()) {
             if (messages[index].getSender() == username) {
                 
-                // --- QA TICKET 12: DANGLING POINTER FIX START ---
                 Message* msgToDelete = &messages[index];
                 for (size_t i = 0; i < messages.size(); i++) {
                     if (messages[i].getReplyTo() == msgToDelete) {
                         messages[i].setReplyTo(nullptr);
                     }
                 }
-                
 
                 messages.erase(messages.begin() + index);
                 return true;
@@ -212,7 +207,6 @@ public:
     }
 
     virtual void displayChat() const {
-        // QA FIX: Changed 'int i' to 'size_t i' to prevent compiler warnings
         for (size_t i = 0; i < messages.size(); i++) {
             messages[i].display();
         }
@@ -220,7 +214,6 @@ public:
 
     vector<Message> searchMessages(string keyword) const {
         vector<Message> matches;
-        // QA FIX: Changed 'int i' to 'size_t i' to prevent compiler warnings
         for (size_t i = 0; i < messages.size(); i++) {
             if (messages[i].getContent().find(keyword) != string::npos) {
                 matches.push_back(messages[i]);
@@ -229,8 +222,14 @@ public:
         return matches;
     }
 
-    void exportToFile(const string& filename) const {
-        // TODO: Implement export to file
+    void exportToFile(const string& filename) const {}
+
+    vector<string> getParticipants() const {
+        return participants;
+    }
+
+    string getChatName() const {
+        return chatName;
     }
 };
 
@@ -257,7 +256,6 @@ public:
             return;
         }
 
-        // QA FIX: Changed 'int i' to 'size_t i' to prevent compiler warnings
         for (size_t i = 0; i < messages.size(); i++) {
             messages[i].display();
         }
@@ -404,25 +402,22 @@ private:
     int currentUserIndex;
 
   int findUserIndex(string username) const {
-        for(size_t i=0;i<users.size();i++)
-        {
-            if (users[i].getUsername() == username)
-
-            {
+        for(size_t i=0; i<users.size(); i++) {
+            if (users[i].getUsername() == username) {
                 return i;
             }
         }
         return -1;
     }
     
-    bool isLoggedIn() const {          // ana
+    bool isLoggedIn() const {
         if (currentUserIndex >= 0 && (size_t)currentUserIndex < users.size()) {
             return true;
         }
         return false;
     }
     
-    string getCurrentUsername() const {     // ana
+    string getCurrentUsername() const {
         if (isLoggedIn()) {
             return users[currentUserIndex].getUsername();
         }
@@ -432,15 +427,14 @@ private:
 public:
     WhatsApp() : currentUserIndex(-1) {}
 
-    ~WhatsApp()
-    {
-        for ( Chat*chat: chats)
-        {
+    ~WhatsApp() {
+        for (Chat* chat : chats) {
             delete chat;
         }
     }
+
     void signUp() {
-        string username,password,phoneNumber;
+        string username, password, phoneNumber;
         while (true) {
             cout << "Enter username: ";
             cin >> username;
@@ -473,7 +467,6 @@ public:
        cout << "Now you may login...\n";
     }
    
-    
     void login() {             
        string username;
        string password;
@@ -493,6 +486,7 @@ public:
        currentUserIndex = index;
        cout << "login succesfully...\n";
     }
+
     void startPrivateChat() {
         if (!isLoggedIn()) {
             cout << "Please log in first!\n";
@@ -505,7 +499,7 @@ public:
         cout << "\n--- Start Private Chat ---\n";
         cout << "Enter target username: ";
         cin >> targetUser;
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore(10000, '\n');
         
         if (targetUser == getCurrentUsername()) {
             cout << "Operation rejected.\n";
@@ -534,7 +528,7 @@ public:
         string groupName, description, secondUser;
         cout << "\n--- Create Group Chat ---\n";
         cout << "Enter Group Name: ";
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore(10000, '\n');
         getline(cin, groupName);
         
         cout << "Enter Group Description: ";
@@ -552,7 +546,8 @@ public:
         initialParticipants.push_back(getCurrentUsername());
         initialParticipants.push_back(secondUser);
         
-        Chat* newGroup = new GroupChat(groupName, description, initialParticipants);
+        GroupChat* newGroup = new GroupChat(initialParticipants, groupName, getCurrentUsername());
+        newGroup->setDescription(description);
         chats.push_back(newGroup);
         
         cout << "Group created successfully!\n";
@@ -600,10 +595,10 @@ public:
         cout << "Enter chat number to open (or 0 to go back): ";
         if (!(cin >> choice)) {
             cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cin.ignore(10000, '\n');
             return;
         }
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cin.ignore(10000, '\n');
         
         if (choice > 0 && choice <= static_cast<int>(myChats.size())) {
             myChats[choice - 1]->displayChat();
@@ -612,9 +607,8 @@ public:
         }
     }
 
-    
- void logout() { 
-      if (isLoggedIn()) {
+    void logout() { 
+        if (isLoggedIn()) {
             users[currentUserIndex].updateLastSeen();   
         }
         currentUserIndex = -1;
