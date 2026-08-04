@@ -202,7 +202,7 @@ public:
                         messages[i].setReplyTo(nullptr);
                     }
                 }
-                // --- QA TICKET 12: DANGLING POINTER FIX END ---
+                
 
                 messages.erase(messages.begin() + index);
                 return true;
